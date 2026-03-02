@@ -114,12 +114,12 @@ export default function Navbar() {
               </SheetContent>
             </Sheet>
 
-            <Link
+            {/* <Link
               href="/login"
               className="hidden text-sm font-medium text-zinc-300 transition-colors hover:text-white sm:block"
             >
               Log In
-            </Link>
+            </Link> */}
 
             {isHomePage ? (
               <Link href="/document-your-code">

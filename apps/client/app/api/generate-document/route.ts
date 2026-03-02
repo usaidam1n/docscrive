@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { authManager } from '../../../lib/auth';
 import { apiConfig } from '../../../lib/config';
 import { logger } from '../../../lib/logger';
+import { AuthenticationError } from '../../../lib/errors';
 import crypto from 'crypto';
 
 function generateNonce(length: number = 16): string {
@@ -110,6 +111,18 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
+    if (error instanceof AuthenticationError) {
+      logger.warn('Documentation generation auth failure', {
+        message: error.message,
+      });
+      return NextResponse.json(
+        {
+          error: 'Authentication required. Please log in with GitHub again.',
+        },
+        { status: 401 }
+      );
+    }
+
     logger.error('Documentation generation proxy error', { error });
 
     return NextResponse.json(
