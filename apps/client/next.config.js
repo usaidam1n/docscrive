@@ -178,28 +178,7 @@ const nextConfig = {
   trailingSlash: false,
 
   // Webpack configuration
-  webpack: (config, { dev, isServer, webpack }) => {
-    // Production optimizations
-    if (!dev && !isServer) {
-      config.optimization.splitChunks = {
-        chunks: 'all',
-        cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            priority: 10,
-            reuseExistingChunk: true,
-          },
-          common: {
-            name: 'common',
-            minChunks: 2,
-            priority: 5,
-            reuseExistingChunk: true,
-          },
-        },
-      };
-    }
-
+  webpack: (config, { dev, webpack }) => {
     // Bundle analyzer in development
     if (dev && process.env.ANALYZE === 'true') {
       config.plugins.push(
