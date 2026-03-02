@@ -6,7 +6,7 @@
 
 [build]
 base = "apps/client"
-command = "npm ci && npm run build"
+command = "npm install && npm run build"
 publish = ".next"
 
 [build.environment]
