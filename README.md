@@ -1,7 +1,7 @@
 # DocScrive
 
-[![CI/CD Pipeline](https://github.com/usaidpeerzada/docscrive/actions/workflows/ci.yml/badge.svg)](https://github.com/usaidpeerzada/docscrive/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/usaidpeerzada/docscrive/branch/main/graph/badge.svg)](https://codecov.io/gh/usaidpeerzada/docscrive)
+[![CI/CD Pipeline](https://github.com/usaidam1n/docscrive/actions/workflows/ci.yml/badge.svg)](https://github.com/usaidam1n/docscrive/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/usaidam1n/docscrive/branch/main/graph/badge.svg)](https://codecov.io/gh/usaidam1n/docscrive)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 
@@ -47,19 +47,22 @@ DocScrive is a **monorepo**. From the repository root:
 
 ```bash
 # Clone the repository
-git clone https://github.com/usaidpeerzada/docscrive.git
+git clone https://github.com/usaidam1n/docscrive.git
 cd docscrive
 
 # Install dependencies (all workspaces)
 npm install
 
-# Set up environment variables
-cp .env.example .env.local
-# Edit .env.local with your configuration (see .env.example for client vs backend vars)
+# Set up environment variables (see "Environment Configuration" below)
+cp .env.example .env
+# Edit .env with your values. Minimum for client: NEXT_PUBLIC_API_SECRET, NEXT_PUBLIC_DOCSCRIVE_API.
+# If you run the backend locally, set API_SECRET (same as NEXT_PUBLIC_API_SECRET, min 32 chars).
 
-# Run the Next.js client development server
+# Run the Next.js client (port 3000)
 npm run dev:client
-# Or: npm run dev --workspace=@docscrive/client
+
+# In another terminal, run the backend (port 3003) for API features
+npm run dev:backend
 ```
 
 Visit [http://localhost:3000](http://localhost:3000) to see the application.
@@ -74,20 +77,11 @@ Visit [http://localhost:3000](http://localhost:3000) to see the application.
 
 ### Environment Configuration
 
-Create a `.env.local` file at the **repository root** (or in `apps/client` for client-only) with:
+Copy `.env.example` to `.env` (or `.env.local`) at the **repository root**. Key variables:
 
-```env
-# Required for client
-NEXT_PUBLIC_API_SECRET=your-api-secret-here
-NEXT_PUBLIC_DOCSCRIVE_API=http://localhost:3003/api
-
-# Optional Analytics
-NEXT_PUBLIC_UMAMI_SCRIPT_URL=https://analytics.example.com/script.js
-NEXT_PUBLIC_UMAMI_WEBSITE_ID=your-website-id
-
-# Optional Error Tracking
-NEXT_PUBLIC_SENTRY_DSN=https://your-sentry-dsn.ingest.sentry.io/
-```
+- **Client (required):** `NEXT_PUBLIC_API_SECRET`, `NEXT_PUBLIC_DOCSCRIVE_API` (e.g. `http://localhost:3003/api` for local backend).
+- **Backend (required when running backend):** `API_SECRET` (same value as `NEXT_PUBLIC_API_SECRET`, min 32 characters).
+- **Optional:** See `.env.example` for GitHub OAuth, Redis, DB, analytics, and error tracking.
 
 ## 🛠️ Development
 
@@ -103,8 +97,8 @@ npm run start:backend      # Same as start
 
 # Code Quality (runs in all workspaces)
 npm run type-check         # TypeScript check
-npm run lint               # ESLint with auto-fix
-npm run lint:check         # ESLint check only
+npm run lint               # ESLint check across workspaces (no auto-fix at root)
+npm run lint:check         # Same as lint at root
 npm run format             # Prettier format
 npm run format:check       # Prettier check only
 
@@ -165,14 +159,18 @@ Build from **monorepo root**:
 docker build -f apps/client/Dockerfile .
 ```
 
+### Backend (Railway)
+
+Deploy `apps/backend` to Railway: set **Root directory** to `apps/backend`, **Build** to `npm install && npm run build`, **Start** to `npm run start`. Set env vars (e.g. `API_SECRET`, `NODE_ENV=production`, optional `REDIS_URL`, `DATABASE_URL`). Point the client's `NEXT_PUBLIC_DOCSCRIVE_API` at the Railway URL (e.g. `https://<your-app>.up.railway.app/api`).
+
 ### Netlify Deployment
 
 The client is deployed via Netlify. CI triggers deploys using Netlify build hooks:
 
 1. In Netlify, connect the repo and set **Base directory** to `apps/client`.
-2. Set **Build command** to `npm install && npm run build --workspace=@docscrive/client` (run from monorepo root).
-3. Add repository secrets in GitHub: `NETLIFY_BUILD_HOOK_STAGING` and `NETLIFY_BUILD_HOOK_PRODUCTION` (from Netlify: Site settings → Build & deploy → Build hooks).
-4. Pushes to `develop` trigger staging; pushes to `main` trigger production.
+2. Set **Build command** to `npm run build`. Set **Publish directory** to `.next` (or leave to Next.js detection).
+3. Add env vars in Netlify (e.g. `NEXT_PUBLIC_DOCSCRIVE_API`, `NEXT_PUBLIC_API_SECRET`) for production.
+4. Add repository secrets in GitHub: `NETLIFY_BUILD_HOOK_STAGING` and `NETLIFY_BUILD_HOOK_PRODUCTION` (from Netlify: Site settings → Build & deploy → Build hooks). Pushes to `develop` trigger staging; pushes to `main` trigger production.
 
 ### Environment-Specific Configurations
 
@@ -221,9 +219,8 @@ The client is deployed via Netlify. CI triggers deploys using Netlify build hook
 
 ### Coverage Requirements
 
-- **Minimum Coverage**: 70% for branches, functions, lines, and statements
-- **Critical Paths**: 95% coverage for core business logic
-- **UI Components**: Visual regression testing with Playwright
+- **Current**: Coverage thresholds are set to 0 in `apps/client/jest.config.js` (target: 70% for branches, functions, lines, and statements).
+- **UI / E2E**: Playwright for user journeys and visual regression.
 
 ## 🤝 Contributing
 
@@ -258,10 +255,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Links
 
-- **Website**: [https://docscrive.usaid.dev](https://docscrive.usaid.dev)
-- **Documentation**: [https://docs.docscrive.com](https://docs.docscrive.com)
-- **Issue Tracker**: [GitHub Issues](https://github.com/usaidpeerzada/docscrive/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/usaidpeerzada/docscrive/discussions)
+- **Website**: [https://www.docscrive.com](https://docscrive.usaid.dev)
+- **Issue Tracker**: [GitHub Issues](https://github.com/usaidam1n/docscrive/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/usaidam1n/docscrive/discussions)
 
 ## 🙏 Acknowledgments
 
@@ -275,5 +271,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 <div align="center">
-  <strong>Built with ❤️ by <a href="https://github.com/usaidpeerzada">Usaid Peerzada</a></strong>
+  <strong>Built with ❤️ by <a href="https://github.com/usaidam1n">Usaid Amin</a></strong>
 </div>

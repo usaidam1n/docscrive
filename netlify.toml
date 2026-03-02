@@ -1,0 +1,10 @@
+# DocScrive – Netlify build config (Next.js app in apps/client)
+# See: https://docs.netlify.com/build/configure-builds/monorepos/
+
+[build]
+  base = "apps/client"
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
