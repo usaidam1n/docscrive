@@ -22,6 +22,7 @@
     "validate": "npm run type-check && npm run lint:check && npm run format:check && npm run test",
     "dev:client": "npm run dev --workspace=@docscrive/client",
     "dev:backend": "npm run dev --workspace=@docscrive/backend",
+    "build:backend": "npm run build --workspace=@docscrive/backend",
     "start": "npm run start --workspace=@docscrive/backend",
     "start:backend": "npm run start --workspace=@docscrive/backend"
   },
