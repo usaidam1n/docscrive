@@ -217,8 +217,8 @@ const nextConfig = {
     CUSTOM_KEY: process.env.CUSTOM_KEY || 'default-value',
   },
 
-  // Standalone output for Docker deployment (required for apps/client/Dockerfile)
-  output: 'standalone',
+  // Standalone output only for Docker (Netlify runtime expects default output)
+  ...(process.env.DOCKER_BUILD === 'true' && { output: 'standalone' }),
 
   // Logging
   logging: {

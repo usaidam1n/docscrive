@@ -2,9 +2,8 @@
 # See: https://docs.netlify.com/build/configure-builds/monorepos/
 
 [build]
-  base = "apps/client"
-  command = "npm run build"
-  publish = ".next"
+  command = "npm run build --workspace=@docscrive/client"
+  publish = "apps/client/.next"
 
 [build.environment]
   NODE_VERSION = "20"
