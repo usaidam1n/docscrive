@@ -1,0 +1,60 @@
+{
+  "name": "DocScrive - AI Code Documentation Generator",
+  "short_name": "DocScrive",
+  "description": "AI-powered code documentation generator and translator. Transform GitHub repos into comprehensive docs instantly.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["developer", "productivity", "documentation", "ai"],
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Document Code",
+      "short_name": "Document",
+      "description": "Generate documentation from code",
+      "url": "/document-your-code",
+      "icons": [
+        {
+          "src": "/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "GitHub Docs",
+      "short_name": "GitHub",
+      "description": "Generate docs from GitHub repos",
+      "url": "/github-docs",
+      "icons": [
+        {
+          "src": "/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

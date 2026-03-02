@@ -1,0 +1,57 @@
+{
+  "name": "docscrive",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DocScrive monorepo – AI-powered documentation, code review, and translation",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint:check --workspaces --if-present",
+    "lint:check": "npm run lint:check --workspaces --if-present",
+    "type-check": "npm run type-check --workspaces --if-present",
+    "format": "prettier --write \"apps\" \"*.md\" \"*.json\" \".github\"",
+    "format:check": "prettier --check \"apps\" \"*.md\" \"*.json\" \".github\"",
+    "validate": "npm run type-check && npm run lint:check && npm run format:check && npm run test",
+    "prepare": "husky install",
+    "dev:client": "npm run dev --workspace=@docscrive/client",
+    "dev:backend": "npm run dev --workspace=@docscrive/backend"
+  },
+  "devDependencies": {
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.2.5",
+    "prettier-plugin-tailwindcss": "^0.5.11"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
+  },
+  "author": "usaidpeerzada",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/usaidpeerzada/docscrive.git"
+  },
+  "keywords": [
+    "nextjs",
+    "react",
+    "typescript",
+    "ai",
+    "documentation",
+    "code-review",
+    "translation"
+  ]
+}

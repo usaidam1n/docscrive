@@ -1,0 +1,231 @@
+/* app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import '@fontsource/poppins';
+@import '@fontsource/poppins/400.css';
+/* Regular */
+@import '@fontsource/poppins/500.css';
+/* Medium */
+@import '@fontsource/poppins/600.css';
+/* Semi-bold */
+
+@layer base {
+  /* The CSS variables will be injected dynamically by ThemeProvider */
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
+  }
+}
+
+/* Custom styles */
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Animation for shadcn/ui components */
+@layer utilities {
+  .animation-delay-75 {
+    animation-delay: 75ms;
+  }
+
+  .animation-delay-500 {
+    animation-delay: 500ms;
+  }
+
+  .animation-delay-1000 {
+    animation-delay: 1000ms;
+  }
+
+  .glass-card {
+    @apply border border-white/60 bg-white/60 backdrop-blur-2xl;
+    box-shadow:
+      0 8px 32px 0 rgb(31 38 135 / 0.07),
+      inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  }
+
+  .glass-card-dark {
+    @apply border border-white/10 bg-black/40 backdrop-blur-2xl;
+    box-shadow:
+      0 8px 32px 0 rgb(0 0 0 / 0.3),
+      inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  }
+
+  .iso-container {
+    perspective: 1500px;
+    transform-style: preserve-3d;
+  }
+
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+
+  .iso-item {
+    transform: rotateX(55deg) rotateZ(-40deg) rotateY(10deg);
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .iso-item:hover {
+    transform: rotateX(55deg) rotateZ(-40deg) rotateY(10deg) translateZ(20px);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 20px rgba(46, 204, 113, 0),
+      0 0 60px rgba(46, 204, 113, 0);
+  }
+
+  50% {
+    box-shadow:
+      0 0 20px rgba(46, 204, 113, 0.15),
+      0 0 60px rgba(46, 204, 113, 0.05);
+  }
+}
+
+@keyframes border-glow {
+  0%,
+  100% {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  50% {
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+}
+
+@keyframes typing-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+.fade-up {
+  animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+.animate-border-glow {
+  animation: border-glow 3s ease-in-out infinite;
+}
+
+/* Premium workspace glass panels */
+.workspace-glass {
+  @apply rounded-2xl border border-white/[0.06] bg-[#13141a]/90 backdrop-blur-2xl;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 20px 60px -10px rgba(0, 0, 0, 0.5);
+}
+
+.workspace-glass:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.workspace-glass-focus {
+  border-color: rgba(46, 204, 113, 0.3) !important;
+  box-shadow:
+    0 0 0 1px rgba(46, 204, 113, 0.1) inset,
+    0 0 30px rgba(46, 204, 113, 0.05),
+    0 20px 60px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* Scrollbar styling for workspace */
+.workspace-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.workspace-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.workspace-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.workspace-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
