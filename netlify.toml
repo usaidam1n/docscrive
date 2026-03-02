@@ -1,11 +1,13 @@
 # DocScrive – Netlify build config (Next.js app in apps/client)
-# Monorepo: build from repo root so the Next.js plugin can bundle `next` into
-# serverless functions (avoids "Cannot find module 'next/dist/server/lib/start-server.js').
-# In Netlify UI set: Base directory = (empty) | Package directory = apps/client
+# Monorepo: treat `apps/client` as an independent Next.js app for Netlify.
+# Netlify will install dependencies and run the build inside this directory,
+# so `next` is available locally and can be bundled into serverless functions.
+# In Netlify UI, leave Base directory empty (root) so this file controls it.
 
 [build]
-command = "npm run build --workspace=@docscrive/client"
-publish = "apps/client/.next"
+base = "apps/client"
+command = "npm ci && npm run build"
+publish = ".next"
 
 [build.environment]
 NODE_VERSION = "20"
