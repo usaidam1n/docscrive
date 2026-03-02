@@ -1,0 +1,27 @@
+// DocScrive Prisma Schema
+// https://pris.ly/d/prisma-schema
+
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// GitHub-authenticated user. The `githubToken` field is AES-256-GCM
+/// encrypted at rest — never stored as plaintext.
+model User {
+  id          String   @id @default(uuid())
+  githubId    String   @unique
+  email       String?
+  name        String?
+  avatarUrl   String?
+  githubToken String   // AES-256-GCM encrypted
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([githubId])
+}
