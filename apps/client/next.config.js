@@ -6,14 +6,17 @@ const rootDir = path.resolve(__dirname, '../..');
 const loadEnvFile = (filePath, override = false) => {
   if (!fs.existsSync(filePath)) return;
   const content = fs.readFileSync(filePath, 'utf8');
-  content.split('\n').forEach((line) => {
+  content.split('\n').forEach(line => {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith('#')) return;
     const eq = trimmed.indexOf('=');
     if (eq <= 0) return;
     const key = trimmed.slice(0, eq).trim();
     let value = trimmed.slice(eq + 1).trim();
-    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
       value = value.slice(1, -1);
     }
     if (override || !(key in process.env)) process.env[key] = value;
@@ -214,9 +217,8 @@ const nextConfig = {
     CUSTOM_KEY: process.env.CUSTOM_KEY || 'default-value',
   },
 
-  // Output configuration for static export if needed
-  // trailingSlash: true,
-  // output: 'export',
+  // Standalone output for Docker deployment (required for apps/client/Dockerfile)
+  output: 'standalone',
 
   // Logging
   logging: {

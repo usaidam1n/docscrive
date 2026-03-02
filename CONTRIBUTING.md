@@ -32,7 +32,7 @@ See [.env.example](.env.example) and the [README](README.md#environment-configur
 ### Run the app
 
 - **Client (Next.js):** `npm run dev:client` (or `npm run dev --workspace=@docscrive/client`)
-- **Backend:** `npm run dev:backend` when implemented
+- **Backend:** `npm run dev:backend` (requires Redis and PostgreSQL; see [.env.example](.env.example))
 
 ## Branch and PR flow
 

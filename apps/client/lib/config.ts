@@ -55,6 +55,20 @@ let config: Env;
 
 try {
   config = envSchema.parse(process.env);
+
+  // In production, require explicit secrets instead of falling back
+  if (config.NODE_ENV === 'production') {
+    if (!config.NEXT_PUBLIC_API_SECRET) {
+      throw new ConfigError(
+        'NEXT_PUBLIC_API_SECRET must be set in production for request signing.'
+      );
+    }
+    if (!config.JWT_SECRET) {
+      throw new ConfigError(
+        'JWT_SECRET must be set in production for secure session handling.'
+      );
+    }
+  }
 } catch (error) {
   if (error instanceof z.ZodError) {
     const errorMessages = error.issues.map(
@@ -75,6 +89,7 @@ export const isTest = config.NODE_ENV === 'test';
 
 export const apiConfig = {
   baseUrl: config.NEXT_PUBLIC_DOCSCRIVE_API,
+  // In development we allow a simple default; in production config.NEXT_PUBLIC_API_SECRET is required
   secret:
     config.NEXT_PUBLIC_API_SECRET ||
     (config.NODE_ENV === 'development' ? 'development-secret' : ''),
@@ -138,6 +153,7 @@ export const processing = {
 } as const;
 
 export const jwt = {
+  // In production, JWT_SECRET is required (see config validation above)
   secret:
     config.JWT_SECRET ||
     'fallback-secret-for-development-only-change-in-production',

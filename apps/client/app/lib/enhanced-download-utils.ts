@@ -11,6 +11,40 @@ export interface DownloadOptions {
   metadata?: any;
 }
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function sanitizeUrl(href: string): string | null {
+  const trimmed = href.trim();
+  // Disallow obvious dangerous schemes
+  if (/^(javascript|data):/i.test(trimmed)) {
+    return null;
+  }
+  // Allow relative URLs
+  if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) {
+    return trimmed;
+  }
+  try {
+    const url = new URL(trimmed);
+    if (
+      url.protocol === 'http:' ||
+      url.protocol === 'https:' ||
+      url.protocol === 'mailto:'
+    ) {
+      return url.toString();
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Download a file directly from the browser
  */
@@ -217,16 +251,19 @@ function convertMarkdownToHTML(markdown: string): string {
             </div>
             <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">${language}</span>
           </div>
-          <pre class="overflow-x-auto p-6"><code class="text-sm font-mono text-gray-800 leading-relaxed">${code.trim()}</code></pre>
+          <pre class="overflow-x-auto p-6"><code class="text-sm font-mono text-gray-800 leading-relaxed">${escapeHtml(
+            code.trim()
+          )}</code></pre>
         </div>
       `;
       })
 
       // Inline code with pill styling
-      .replace(
-        /`([^`]+)`/g,
-        '<code class="inline-flex items-center px-2 py-1 text-sm font-mono bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-800 border border-blue-200 rounded-full shadow-sm">$1</code>'
-      )
+      .replace(/`([^`]+)`/g, (match, code) => {
+        return `<code class="inline-flex items-center px-2 py-1 text-sm font-mono bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-800 border border-blue-200 rounded-full shadow-sm">${escapeHtml(
+          code
+        )}</code>`;
+      })
 
       // Enhanced blockquotes with icons
       .replace(/^> (.+)$/gm, (match, text) => {
@@ -265,42 +302,59 @@ function convertMarkdownToHTML(markdown: string): string {
         <blockquote class="my-6 ${bgColor} border-l-4 ${borderColor} rounded-r-lg p-4 shadow-sm">
           <div class="flex items-start space-x-3">
             <span class="text-2xl flex-shrink-0">${icon}</span>
-            <p class="${textColor} font-medium leading-relaxed">${text}</p>
+            <p class="${textColor} font-medium leading-relaxed">${escapeHtml(
+              text
+            )}</p>
           </div>
         </blockquote>
       `;
       })
 
       // Enhanced links with hover effects
-      .replace(
-        /\[([^\]]+)\]\(([^)]+)\)/g,
-        '<a href="$2" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium underline decoration-blue-300 hover:decoration-blue-500 underline-offset-2 transition-all duration-200 hover:scale-105">$1<svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>'
-      )
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, label, href) => {
+        const safeHref = sanitizeUrl(href);
+        const safeLabel = escapeHtml(label);
+        if (!safeHref) {
+          return safeLabel;
+        }
+        return `<a href="${safeHref}" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium underline decoration-blue-300 hover:decoration-blue-500 underline-offset-2 transition-all duration-200 hover:scale-105">${safeLabel}<svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>`;
+      })
 
       // Lists with beautiful styling
-      .replace(
-        /^\* (.+)$/gm,
-        '<li class="flex items-start space-x-3 py-2"><span class="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-2"></span><span class="text-gray-700 leading-relaxed">$1</span></li>'
-      )
-      .replace(
-        /^\d+\. (.+)$/gm,
-        '<li class="flex items-start space-x-3 py-2"><span class="flex-shrink-0 w-6 h-6 bg-blue-500 text-white text-xs font-bold rounded-full flex items-center justify-center mt-0.5">•</span><span class="text-gray-700 leading-relaxed">$1</span></li>'
-      )
+      .replace(/^\* (.+)$/gm, (match, item) => {
+        return `<li class="flex items-start space-x-3 py-2"><span class="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-2"></span><span class="text-gray-700 leading-relaxed">${escapeHtml(
+          item
+        )}</span></li>`;
+      })
+      .replace(/^\d+\. (.+)$/gm, (match, item) => {
+        return `<li class="flex items-start space-x-3 py-2"><span class="flex-shrink-0 w-6 h-6 bg-blue-500 text-white text-xs font-bold rounded-full flex items-center justify-center mt-0.5">•</span><span class="text-gray-700 leading-relaxed">${escapeHtml(
+          item
+        )}</span></li>`;
+      })
 
       // Bold and italic with enhanced styling
-      .replace(
-        /\*\*([^\*]+)\*\*/g,
-        '<strong class="font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">$1</strong>'
-      )
-      .replace(
-        /\*([^\*]+)\*/g,
-        '<em class="italic text-gray-600 font-medium">$1</em>'
-      )
+      .replace(/\*\*([^\*]+)\*\*/g, (match, text) => {
+        return `<strong class="font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">${escapeHtml(
+          text
+        )}</strong>`;
+      })
+      .replace(/\*([^\*]+)\*/g, (match, text) => {
+        return `<em class="italic text-gray-600 font-medium">${escapeHtml(
+          text
+        )}</em>`;
+      })
 
       // Tables with advanced styling (basic implementation)
       .replace(/\|(.+)\|/g, (match, content) => {
         const cells = content.split('|').map((cell: string) => cell.trim());
-        return `<tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">${cells.map((cell: string) => `<td class="px-6 py-4 text-sm text-gray-700">${cell}</td>`).join('')}</tr>`;
+        return `<tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">${cells
+          .map(
+            (cell: string) =>
+              `<td class="px-6 py-4 text-sm text-gray-700">${escapeHtml(
+                cell
+              )}</td>`
+          )
+          .join('')}</tr>`;
       })
 
       // Paragraphs with proper spacing

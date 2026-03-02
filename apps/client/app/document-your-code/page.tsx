@@ -647,10 +647,7 @@ export default function DocumentYourCodePage() {
               >
                 <ol className="flex items-center gap-0">
                   {githubSteps.map((step, index) => (
-                    <li
-                      key={step.id}
-                      className="flex items-center"
-                    >
+                    <li key={step.id} className="flex items-center">
                       <button
                         type="button"
                         onClick={() => {
@@ -698,7 +695,9 @@ export default function DocumentYourCodePage() {
                       {index < githubSteps.length - 1 && (
                         <span
                           className={`mx-1 h-px w-6 shrink-0 md:w-8 ${
-                            step.completed ? 'bg-emerald-500/40' : 'bg-white/[0.08]'
+                            step.completed
+                              ? 'bg-emerald-500/40'
+                              : 'bg-white/[0.08]'
                           }`}
                         />
                       )}
@@ -782,7 +781,11 @@ export default function DocumentYourCodePage() {
                       : 'bg-white/[0.08] text-zinc-500'
                 }`}
               >
-                {step.completed ? <Check className="h-3.5 w-3.5" strokeWidth={2.5} /> : index + 1}
+                {step.completed ? (
+                  <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                ) : (
+                  index + 1
+                )}
               </span>
             ))}
           </div>

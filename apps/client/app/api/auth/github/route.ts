@@ -15,13 +15,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const { searchParams } = new URL(request.url);
-    const redirectUri = searchParams.get('redirect_uri');
-
-    const oauthUrl = authManager.generateOAuthURL(redirectUri || undefined);
+    // Always use the configured redirect URI; do not accept arbitrary redirect_uri from the client
+    const oauthUrl = authManager.generateOAuthURL();
 
     logger.info('Redirecting to GitHub OAuth', {
-      hasRedirectUri: !!redirectUri,
       userAgent: request.headers.get('user-agent'),
     });
 

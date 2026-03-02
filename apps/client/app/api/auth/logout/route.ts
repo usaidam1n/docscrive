@@ -10,6 +10,7 @@ export async function POST() {
       const payload = await authManager.verifySession();
       userId = payload.sub;
     } catch {
+      // Session invalid or missing — continue with logout
     }
 
     authManager.destroySession();

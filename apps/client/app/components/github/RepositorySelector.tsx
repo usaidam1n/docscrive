@@ -291,7 +291,11 @@ export function RepositorySelector({
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: 0.25, delay: Math.min(i * 0.02, 0.2), ease: [0.22, 1, 0.36, 1] }}
+                  transition={{
+                    duration: 0.25,
+                    delay: Math.min(i * 0.02, 0.2),
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
                   className={`group/repo relative cursor-pointer overflow-hidden rounded-2xl transition-all duration-200 ${
                     isSelected
                       ? 'border border-emerald-500/30 bg-emerald-500/[0.08] shadow-[0_0_24px_rgba(16,185,129,0.12)] ring-1 ring-emerald-500/20'
@@ -301,7 +305,7 @@ export function RepositorySelector({
                 >
                   {/* Selected accent bar */}
                   {isSelected && (
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-emerald-400 to-teal-400" />
+                    <div className="absolute bottom-0 left-0 top-0 w-1 bg-gradient-to-b from-emerald-400 to-teal-400" />
                   )}
 
                   <div className="flex flex-col gap-3 p-4 pl-5 sm:flex-row sm:items-center sm:gap-4">
@@ -352,9 +356,13 @@ export function RepositorySelector({
                         }`}
                       >
                         {repository.private ? (
-                          <><Lock className="h-3 w-3" /> Private</>
+                          <>
+                            <Lock className="h-3 w-3" /> Private
+                          </>
                         ) : (
-                          <><Globe className="h-3 w-3" /> Public</>
+                          <>
+                            <Globe className="h-3 w-3" /> Public
+                          </>
                         )}
                       </span>
                     </div>

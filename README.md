@@ -55,7 +55,7 @@ npm install
 
 # Set up environment variables
 cp .env.example .env.local
-# Edit .env.local with your configuration
+# Edit .env.local with your configuration (see .env.example for client vs backend vars)
 
 # Run the Next.js client development server
 npm run dev:client
@@ -96,9 +96,10 @@ NEXT_PUBLIC_SENTRY_DSN=https://your-sentry-dsn.ingest.sentry.io/
 ```bash
 # Development
 npm run dev:client          # Start Next.js client dev server
-npm run dev:backend         # Start backend dev server (when implemented)
+npm run dev:backend         # Start backend dev server
 npm run build              # Build all workspaces
-npm run start              # (run from apps/client: npm run start --workspace=@docscrive/client)
+npm run start              # Start production backend (from repo root)
+npm run start:backend      # Same as start
 
 # Code Quality (runs in all workspaces)
 npm run type-check         # TypeScript check
@@ -169,7 +170,7 @@ docker build -f apps/client/Dockerfile .
 The client is deployed via Netlify. CI triggers deploys using Netlify build hooks:
 
 1. In Netlify, connect the repo and set **Base directory** to `apps/client`.
-2. Set **Build command** to `npm run build` (run from repo root: `npm install && npm run build --workspace=@docscrive/client`, or configure Netlify to use the monorepo root and run the client build).
+2. Set **Build command** to `npm install && npm run build --workspace=@docscrive/client` (run from monorepo root).
 3. Add repository secrets in GitHub: `NETLIFY_BUILD_HOOK_STAGING` and `NETLIFY_BUILD_HOOK_PRODUCTION` (from Netlify: Site settings → Build & deploy → Build hooks).
 4. Pushes to `develop` trigger staging; pushes to `main` trigger production.
 

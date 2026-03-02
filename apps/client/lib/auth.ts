@@ -95,15 +95,15 @@ export class AuthManager {
     // Validate state
     const storedState = this.getOAuthStateCookie();
     logger.info('OAuth state validation', {
-      receivedState: state.substring(0, 8) + '...',
-      storedState: storedState ? storedState.substring(0, 8) + '...' : null,
+      receivedStatePrefix: state.substring(0, 8) + '...',
+      storedStatePrefix: storedState
+        ? storedState.substring(0, 8) + '...'
+        : null,
       match: storedState === state,
     });
 
     if (!storedState || storedState !== state) {
       logger.error('OAuth state mismatch', {
-        receivedState: state,
-        storedState,
         receivedLength: state.length,
         storedLength: storedState?.length || 0,
       });
@@ -292,22 +292,25 @@ export class AuthManager {
   // Cookie management
   private setJWTCookie(jwt: string): void {
     if (typeof window !== 'undefined') {
-      // Client-side: use document.cookie
-      document.cookie = `${AuthManager.JWT_COOKIE_NAME}=${jwt}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${AuthManager.JWT_MAX_AGE}`;
-    } else {
-      // Server-side: use Next.js cookies
-      try {
-        const cookieStore = cookies();
-        cookieStore.set(AuthManager.JWT_COOKIE_NAME, jwt, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict',
-          maxAge: AuthManager.JWT_MAX_AGE,
-          path: '/',
-        });
-      } catch (error) {
-        logger.warn('Could not set JWT cookie on server side', { error });
-      }
+      // Client-side: JWT cookie must be HttpOnly and set by the server only
+      logger.warn(
+        'Attempted to set JWT cookie on the client; this is ignored for security reasons.'
+      );
+      return;
+    }
+
+    // Server-side: use Next.js cookies
+    try {
+      const cookieStore = cookies();
+      cookieStore.set(AuthManager.JWT_COOKIE_NAME, jwt, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: AuthManager.JWT_MAX_AGE,
+        path: '/',
+      });
+    } catch (error) {
+      logger.warn('Could not set JWT cookie on server side', { error });
     }
   }
 
@@ -333,16 +336,18 @@ export class AuthManager {
 
   private clearJWTCookie(): void {
     if (typeof window !== 'undefined') {
-      // Client-side
-      document.cookie = `${AuthManager.JWT_COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`;
-    } else {
-      // Server-side
-      try {
-        const cookieStore = cookies();
-        cookieStore.delete(AuthManager.JWT_COOKIE_NAME);
-      } catch (error) {
-        logger.warn('Could not clear JWT cookie on server side', { error });
-      }
+      logger.warn(
+        'Attempted to clear JWT cookie on the client; this is ignored for security reasons.'
+      );
+      return;
+    }
+
+    // Server-side
+    try {
+      const cookieStore = cookies();
+      cookieStore.delete(AuthManager.JWT_COOKIE_NAME);
+    } catch (error) {
+      logger.warn('Could not clear JWT cookie on server side', { error });
     }
   }
 

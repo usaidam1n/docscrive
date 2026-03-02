@@ -13,9 +13,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No signature' }, { status: 400 });
     }
 
-    const secret =
-      process.env['GITHUB_WEBHOOK_SECRET'] ||
-      (isDevelopment ? 'dev_secret' : '');
+    const envSecret = process.env['GITHUB_WEBHOOK_SECRET'];
+    if (!envSecret && !isDevelopment) {
+      logger.error('GITHUB_WEBHOOK_SECRET is not set in production');
+      return NextResponse.json(
+        { error: 'Server misconfiguration' },
+        { status: 500 }
+      );
+    }
+
+    const secret = envSecret || 'dev_secret';
     const hmac = crypto.createHmac('sha256', secret);
     const digest = 'sha256=' + hmac.update(rawBody).digest('hex');
 
@@ -58,7 +65,7 @@ export async function POST(request: Request) {
     const backendSignature = crypto
       .createHmac('sha256', apiConfig.secret)
       .update(signaturePayload)
-      .digest('hex'    );
+      .digest('hex');
 
     const backendUrl = apiConfig.baseUrl || 'http://localhost:3003/api';
     const backendResponse = await fetch(`${backendUrl}/webhook/github`, {

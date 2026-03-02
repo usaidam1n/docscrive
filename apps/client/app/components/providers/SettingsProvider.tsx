@@ -208,7 +208,6 @@ export function useApiSettings() {
   };
 }
 
-
 export function useSettingsModal() {
   const { isModalOpen, modalMessage, openModal, closeModal, setModalMessage } =
     useSettings();
